@@ -43,7 +43,7 @@
     }
     input.focus();
     sweetTitles = window.sweetTitles;
-    sweetTitles && sweetTitles.init();
+    sweetTitles && sweetTitles();
   }
 
   function autocomplete(table, list, v) {

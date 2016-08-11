@@ -1,10 +1,12 @@
 /*  Sweet Titles (c) Creative Commons 2005
   http://creativecommons.org/licenses/by-sa/2.5/
   Author: Dustin Diaz | http://www.dustindiaz.com
-  Updated: Paul Clarke, to fix ie offset and kill old tips if called twice
-  Update: PC again, 29/08/07 to not conflict with thickbox
+  Update: PC, 29/08/07 to not conflict with thickbox
+  PC rewritten 2016
 */
-var sweetTitles = (function (window, document, gU, parseInt, documentElement, body) { 
+var sweetTitles = (function (window, document, parseInt, documentElement, body, gU) { 
+
+  gU = window.gU;
   if (!gU) return;
 
   var tipElements = ['a'];  // @Array: Allowable elements that can have the toolTip
@@ -41,7 +43,7 @@ var sweetTitles = (function (window, document, gU, parseInt, documentElement, bo
       tp = parseInt(scrY+10),
       lt = parseInt(scrX+10),
       anch = checkNode();
-    sweetTitles.tip.innerHTML = anch.getAttribute('tip');
+    gU.html(sweetTitles.tip, anch.getAttribute('tip'));
 
     if (parseInt(document[documentElement].clientWidth + document[documentElement].scrollLeft) < parseInt(sweetTitles.tip.offsetWidth + lt)) {
       lt = parseInt(lt-(sweetTitles.tip.offsetWidth+25));
@@ -114,6 +116,5 @@ var sweetTitles = (function (window, document, gU, parseInt, documentElement, bo
     }
   };
   window.setTimeout(sweetTitles.init, 500);
-  // gU.ok(sweetTitles.init);
-  return sweetTitles;
-})(window, document, window.gU, parseInt, 'documentElement', 'body');
+  return sweetTitles.init; // only init is exported now so call sweetTitles()
+})(window, document, parseInt, 'documentElement', 'body');

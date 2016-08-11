@@ -1,5 +1,5 @@
 'use strict';
-(function(document, gU, sweetTitles, round, appendChild, coords) {
+(function(document, gU, round, appendChild, coords, sweetTitles) {
   if (!gU) return;
   var images,
     script = '/php/images.php',
@@ -74,7 +74,8 @@
     overlay.style.height = height + 'px';
     overlay.title = note.text;
     document.body[appendChild](overlay);
-    if (sweetTitles) sweetTitles.init();
+    sweetTitles = window.sweetTitles;
+    if (sweetTitles) sweetTitles();
     return overlay;
   }
 
@@ -102,4 +103,4 @@
   }
 
   gU.ok(init);
-})(document, window.gU, window.sweetTitles, Math.round, 'appendChild', 'coords');
+})(document, window.gU, Math.round, 'appendChild', 'coords');
