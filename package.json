@@ -1,0 +1,27 @@
+{
+  "name": "js",
+  "version": "1.0.0",
+  "description": "client js for clarkeology.com",
+  "main": "gbbsUpdater.js",
+  "scripts": {
+    "build": "./build.sh",
+    "postinstall": "npm run build",
+    "test": "echo no tests yet; exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:pauly/js.git"
+  },
+  "keywords": [
+    "js",
+    "javascript"
+  ],
+  "author": "Paul Clarke <pauly@clarkeology.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pauly/js/issues"
+  },
+  "dependencies": {
+    "uglifyjs": "~2.4.10"
+  }
+}
