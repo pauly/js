@@ -1,5 +1,6 @@
-(function (window, document, gU, sweetTitles, value, space, createElement, parentNode, appendChild, insertBefore, getAttribute, description) {
+(function (window, document, value, length, space, parentNode, insertBefore, description, gU, sweetTitles) {
   'use strict';
+  gU = window.gU;
   if (!gU) return;
   /* $(':input:enabled.[class*=maxlen]').each(function() {
     if (/length(\d+)/.test($(this).attr('class'))) {
@@ -20,63 +21,67 @@
       $(this).after('<abbr title="Chars remaining" class="kC">' + len + '</abbr>').bind('keyup change', showCharCount).each(showCharCount);
     }
   }); */
-  var inputs = gU.byTag('input'), list, input, table, i, mText, mCategory, tagDiv;
-  for (i = inputs.length - 1; i >= 0; --i) {
-    input = inputs[i];
-    table = input[getAttribute]('rel');
-    if (!table) continue;
-    gU.on(input, 'keyup', function(e, v, self, parent) {
-      self = this;
-      v = this.value;
-      if (v.length < 3) return;
-      table = this[getAttribute]('rel');
-      if (!list) {
-        list = document[createElement]('ul');
-        list.className = 'popup';
-        // list.id = 'popup' + table;
-        parent = self[parentNode];
-        // parent[appendChild](list);
-        parent[insertBefore](list, self);
-        parent[insertBefore](self, list); // swap
-      }
-      gU.getJSON('/j/' + table + '?v=' + v, function(js, item, li, a, title) {
-        // if (!js) return;
+
+  function buildList(list, js, input, item, listItem, link, index) {
+    input = this; // this way minifies better than binding
+    gU.html(list, '');
+    for (index = 0; index < js[length]; index++) {
+      item = js[index];
+      listItem = _createElement('li');
+      link = _createElement('a');
+      link.id = item.guid;
+      link.title = item[description] || '';
+      // if (item.category) link.className = item.category.join(space);
+      gU.html(link, item.title);
+      gU.aC(listItem, link); // add link to listItem
+      gU.aC(list, listItem); // add listItem to list
+      gU.on(link, 'click', function() {
+        input.value = this.id;
         gU.html(list, '');
-        for (i = 0; i < js.length; i ++) {
-          item = js[i];
-          li = document[createElement]('li');
-          a = document[createElement]('a');
-          a.id = item.guid;
-          a.title = item[description];
-          // if (item.category) a.className = item.category.join(space);
-          title = item.title;
-          if (item[description]) title += ' <i>' + ('' + item[description]).substr(0, 100) + '</i>';
-          gU.html(a, title);
-          list[appendChild](li);
-          li[appendChild](a);
-          gU.on(a, 'click', function() {
-            self.value = this.id;
-            gU.html(list, '');
-          });
-        }
-        self.focus();
-        if (sweetTitles) sweetTitles.init();
+        list = 0;
       });
-    });
+    }
+    input.focus();
+    sweetTitles = window.sweetTitles;
+    sweetTitles && sweetTitles.init();
+  }
+
+  function autocomplete(table, list, v) {
+    v = this.value;
+    if (v[length] > 2) {
+      gU.getJSON('/j/' + table + '?v=' + v, buildList.bind(this, list));
+    }
+  }
+
+  var inputs = gU.byTag('input'),
+    _createElement = document.createElement.bind(document),
+    input, table, i, mText, mCategory, tagDiv;
+  for (i = inputs[length] - 1; i >= 0; --i) {
+    input = inputs[i];
+    table = input.getAttribute('rel');
+    if (table) {
+      var list = _createElement('ul');
+      list.className = 'popup';
+      parent = input[parentNode];
+      parent[insertBefore](list, input);
+      parent[insertBefore](input, list); // swap
+      gU.on(input, 'keyup', autocomplete.bind(input, table, list));
+    }
   };
   mCategory = gU.byId('mCategory');
   if (mCategory) {
-    tagDiv = document[createElement]('div');
+    tagDiv = _createElement('div');
     mCategory[parentNode][insertBefore](tagDiv, mCategory);
     mCategory[parentNode][insertBefore](mCategory, tagDiv); // swap them
     gU.on(mCategory, 'keyup', function() {
       var val = mCategory[value];
-      if (!val) return;
-      var tags = val.split(space);
-      for (var i in tags) {
-        tags[i] = '<a target="#" rel="tag" class="' + tags[i] + '" href="/' + tags[i] + '">' + tags[i].replace(/\+/g, space) + '</' + 'a>';
+      if (val) {
+        var tags = val.split(space);
+        for (var i in tags) {
+          tags[i] = '<a href="#" rel="tag" class="' + tags[i] + '" href="/' + tags[i] + '">' + tags[i].replace(/\+/g, space) + '</' + 'a>';
+        }
+        gU.html(tagDiv, tags.join(space));
       }
-      gU.html(tagDiv, tags.join(space));
     });
   }
   /* 
@@ -91,11 +96,4 @@
     mText[value] = '';
     mText[value] = val;
   }
-  /* $('input.ajaxPopUp').each(function () {
-    var name = $(this).attr('name');
-    $(this).attr('name', '_' + name).after('<input type="hidden" id="_hidden_' + name + '" name="' + name + '" value="' + $(this).val() + '" />').autocomplete('/php/xml.php?mode=pipe&table=' + $(this).attr('rel')).result(function (e, item) {
-      $(':input#' + name).val(item[0].replace(/\s*\(.+\)/g, '').replace(/\s*<\/?[^>]+(>|$)/g, ''));
-      $(':input#_hidden_' + name).val(item[1]);
-    });
-  }); */
-})(window, document, window.gU, window.sweetTitles, 'value', ' ', 'createElement', 'parentNode', 'appendChild', 'insertBefore', 'getAttribute', 'description');
+})(window, document, 'value', 'length', ' ', 'parentNode', 'insertBefore', 'description');
