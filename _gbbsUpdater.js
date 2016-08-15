@@ -38,16 +38,15 @@ var gU = (function(window, document) {
   }
 
   // To read a cookie, given the name. adapted from jquery.cookie
-  function _cookie(name, index, cookie, cookies) {
-    // if (!document.cookie) return null;
-    cookies = document.cookie.split(/; */);
-    for (index = cookies[length]; index >= 0; --index) {
-      cookie = ('' + cookies[index])[replace](/^ /g, '');
-      if (cookie.substr(0, name[length] + 1) == (name + '=')) {
-        return decodeURIComponent(cookie.substr(name[length] + 1));
-      }
-    }
-  }
+  // function _cookie(name, index, cookie, cookies) {
+  //   cookies = document.cookie.split(/; */);
+  //   for (index = cookies[length]; index >= 0; --index) {
+  //     cookie = ('' + cookies[index])[replace](/^ /g, '');
+  //     if (cookie.substr(0, name[length] + 1) == (name + '=')) {
+  //       return decodeURIComponent(cookie.substr(name[length] + 1));
+  //     }
+  //   }
+  // }
 
   // return a list item for the admin options
   function _adminLink(href, table, id, callback, anchor) {
@@ -61,15 +60,16 @@ var gU = (function(window, document) {
   }
 
   function _html(element, content) { // like $.html
-    if (!element) return;
-    if (typeof content === 'string') {
-      element[innerHTML] = content;
-      return;
+    if (element) {
+      if (typeof content === 'string') {
+        element[innerHTML] = content;
+        return;
+      }
+      while (element.lastChild) {
+        element[removeChild](element.lastChild);
+      }
+      _appendChild(element, content);
     }
-    while (element.lastChild) {
-      element[removeChild](element.lastChild);
-    }
-    _appendChild(element, content);
   }
 
   /* var _warningClass = ' warning';
@@ -212,7 +212,12 @@ var gU = (function(window, document) {
       anchor,
       href,
       regex,
-      user = _cookie('lN') || 0;
+      user;
+
+    if (regex = /lN=(\w+)/.exec(document.cookie)) {
+      user = regex[1];
+    }
+
     for (index = tags[length] - 1; index >= 0; --index) {
       var tag = tags[index],
         t = tag[innerHTML],
