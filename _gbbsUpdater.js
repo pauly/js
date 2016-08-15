@@ -94,8 +94,8 @@ var gU = (function(window, document) {
       var console = window.console;
       console && console.log.apply(console, arguments);
     }, */
-    byId: document.getElementById.bind(document),
-    byTag: _getElementsByTagName,
+    id: document.getElementById.bind(document),
+    tag: _getElementsByTagName,
     get: function(url, callback, request) { // like $.get
       // don't support ie6
       request = new XMLHttpRequest();
@@ -136,10 +136,10 @@ var gU = (function(window, document) {
     /* dR: function(anchor, table, id, mode) {
       var url = script + '?t=' + table + '&m=' + mode + '&key=' + id,
         callerDivId = table + ':' + id,
-        callerDiv = gU.byId(callerDivId),
+        callerDiv = gU.id(callerDivId),
         toggler;
       if (!callerDiv) {
-        toggler = gU.byId('toggle' + table + '' + id);
+        toggler = gU.id('toggle' + table + '' + id);
         callerDiv = toggler.parentNode;
       }
       _warn(callerDiv);
@@ -156,11 +156,11 @@ var gU = (function(window, document) {
     }, */
     /* cM: function(m) {
       var url = script + '?m=' + edit + '&key=' + m + '&threadClosed=1',
-        div = gU.byId(message + ' ' + m),
+        div = gU.id(message + ' ' + m),
         cLink;
       _warn(div);
       if (confirm('Really close ' + message + ' ' + m + '?')) {
-        cLink = gU.byId('close' + m);
+        cLink = gU.id('close' + m);
         _html(cLink, 'Closing...');
         url += '&confirm=1';
         gU.get(url, function() {
@@ -172,11 +172,11 @@ var gU = (function(window, document) {
     }, */
     /* rM: function(m) {
       var url = script + '?t=' + message + '&m=report&key=' + m,
-        div = gU.byId(message + m),
+        div = gU.id(message + m),
         rLink;
       _warn(div);
       if (confirm('Report ' + message + ' ' + m + ' as spam?')) {
-        rLink = gU.byId('report' + m);
+        rLink = gU.id('report' + m);
         _html(rLink, 'Reporting and deleting...');
         url = url + '&confirm=1';
         gU.get(url, function() {
@@ -189,13 +189,13 @@ var gU = (function(window, document) {
     },
     dM: function(m) {
       var url = script + '?m=' + remove + '&key=' + m,
-        div = gU.byId(message + m);
+        div = gU.id(message + m);
       _warn(div);
       if (confirm('Really ' + remove + ' ' + message + ' ' + m + '?')) {
-        _html(gU.byId(remove + m), 'Deleting...');
+        _html(gU.id(remove + m), 'Deleting...');
         url = url + '&confirm=1';
         gU.get(url, function(response) {
-          _html(gU.byId(remove + m, remove + 'd');
+          _html(gU.id(remove + m, remove + 'd');
           _html(div, '');
         });
         return;
@@ -257,11 +257,9 @@ var gU = (function(window, document) {
         _appendChild(div, anchor);
       }
     }
-    /* if (gU.byId('latitude') && gU.byId('longitude')) {
-      gU.byId('latitude').parent().append('<div id="gmapWrapper"><div id="inlineMap" class="map">Initialising map...</div></div>');
-      window.myGmap && myGmap.init(gU.byId('inlineMap'), gU.byId('latitude').value, gU.byId('longitude').value);
-    } */
   }
+  gU.byId = gU.id;
+  gU.byTag = _getElementsByTagName;
   gU.ok = gU.on.bind(gU, window, 'load');
   gU.ok(_initialise);
   return gU;

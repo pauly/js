@@ -88,17 +88,17 @@
     tip: Object,        // @Element: The actual toolTip itself
     init: function() {
       if ((window.innerWidth || document[body].clientWidth) < 800) return;
-      // var oldTip = gU.byId('toolTip'), i;
+      // var oldTip = gU.id('toolTip'), i;
       // if (oldTip) document[body].removeChild(oldTip);
       sweetTitles.tip = document.createElement('div');
       sweetTitles.tip.id = 'toolTip';
-      gU.byTag(body)[0].appendChild(sweetTitles.tip);
+      gU.aC(gU.tag(body)[0], sweetTitles.tip);
       sweetTitles.tip.style.top = '0';
       sweetTitles.tip.style.position = 'absolute';
       sweetTitles.tip.style.visibility = 'hidden';
       tipOut();
       for (i = 0; i < tipElements.length; i ++) {
-        var c = gU.byTag(tipElements[i]),
+        var c = gU.tag(tipElements[i]),
           curLen = c.length;
         for (var j = 0; j < curLen; j ++) {
           if (!c[j].title) continue;

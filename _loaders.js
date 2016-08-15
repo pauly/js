@@ -49,7 +49,7 @@
 
   // from https://developers.google.com/speed/docs/insights/OptimizeCSSDelivery
   function loadDeferredStyles(addStylesNode, replacement) {
-    addStylesNode = gU.byId('deferred');
+    addStylesNode = gU.id('deferred');
     replacement = _createElement('div');
     gU.html(replacement, addStylesNode.textContent);
     gU.aC(document.body, replacement);

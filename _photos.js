@@ -28,7 +28,7 @@
     return content.replace(/\s|folkestone,/g, '').split(',');
   };
   gU.ok(function (tags, placeHolders, placeHolder, i, context, reasonsToQuit, url) {
-    tags = getTagsFrom(gU.byId('footerTags'));
+    tags = getTagsFrom(gU.id('footerTags'));
     if (!tags[length]) tags = getTagsFrom(document.body);
     if (!tags[length]) tags = getTagsFromMetaKeywords();
     if (!tags[length]) return;
@@ -46,13 +46,13 @@
       if (context.className.indexOf('gbbs') !== -1) break;
     }
     if (!context) return;
-    reasonsToQuit = [ 'img', 'iframe' ];
+    reasonsToQuit = ['img', 'iframe'];
     for (i = 0; i < reasonsToQuit[length]; i ++) { 
-      var elements = gU.byTag(reasonsToQuit[i], context);
+      var elements = gU.tag(reasonsToQuit[i], context);
       if (elements && elements[length]) return;
     }
     url = 'https://picasaweb.google.com/data/feed/base/user/paulypopex?kind=photo';
-    /* var link = gU.byTag('link');
+    /* var link = gU.tag('link');
     for (var i in link) {
       if (link[i].getAttribute('rel') === 'picasa') {
         url = link[i].getAttribute('url');
@@ -84,7 +84,7 @@
           callback(div, secondsToRefresh, counter + 1, images, callback);
         }, secondsToRefresh * 1000);
       };
-      return callback(gU.byId(id), 10, 0, js.feed.entry, callback);
+      return callback(gU.id(id), 10, 0, js.feed.entry, callback);
     });
   });
 }(window.gU, document, 'getElementsByClassName', 'length');

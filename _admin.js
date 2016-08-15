@@ -36,7 +36,7 @@
       gU.aC(listItem, link); // add link to listItem
       gU.aC(list, listItem); // add listItem to list
       gU.on(link, 'click', function() {
-        input.value = this.id;
+        input[value] = this.id;
         gU.html(list, '');
         list = 0;
       });
@@ -46,19 +46,18 @@
   }
 
   function autocomplete(table, list, v) {
-    v = this.value;
+    v = this[value];
     if (v[length] > 2) {
       gU.json('/j/' + table + '?v=' + v, buildList.bind(this, list));
     }
   }
 
-  var inputs = gU.byTag('input'),
+  var inputs = gU.tag('input'),
     _createElement = document.createElement.bind(document),
     input, table, i, mText, mCategory, tagDiv;
   for (i = inputs[length] - 1; i >= 0; --i) {
     input = inputs[i];
-    table = input.getAttribute('rel');
-    if (table) {
+    if (table = input.getAttribute('rel')) { // not good practice but better minifying
       var list = _createElement('ul');
       list.className = 'popup';
       parent = input[parentNode];
@@ -82,10 +81,13 @@
       }
     });
   }
-  /* 
-  $('input[name=venueAddress]').change(function () {
-    $('input[name=latitude],input[name=longitude]').val('');
-  }); */
+  // if (gU.byId('latitude') && gU.byId('longitude')) {
+  //  gU.byId('latitude').parent().append('<div id="gmapWrapper"><div id="inlineMap" class="map">Initialising map...</div></div>');
+  //  window.myGmap && myGmap.init(gU.byId('inlineMap'), gU.byId('latitude')[value], gU.byId('longitude')[value]);
+  // }
+  // $('input[name=venueAddress]').change(function () {
+  //  $('input[name=latitude],input[name=longitude]').val('');
+  // });
   if (mText = gU.byId('mText')) { // not good practice but better minifying
     mText.focus();
     // moves cursor to bottom
