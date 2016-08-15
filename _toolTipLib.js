@@ -1,12 +1,10 @@
 /*  Sweet Titles (c) Creative Commons 2005
   http://creativecommons.org/licenses/by-sa/2.5/
   Author: Dustin Diaz | http://www.dustindiaz.com
-  Update: PC, 29/08/07 to not conflict with thickbox
-  PC rewritten 2016
+  Updated: Paul Clarke, to fix ie offset and kill old tips if called twice
+  Update: PC again, 29/08/07 to not conflict with thickbox
 */
-var sweetTitles = (function (window, document, parseInt, documentElement, body, gU) { 
-
-  gU = window.gU;
+(function (window, document, gU, parseInt, documentElement, body) { 
   if (!gU) return;
 
   var tipElements = ['a'];  // @Array: Allowable elements that can have the toolTip
@@ -43,7 +41,7 @@ var sweetTitles = (function (window, document, parseInt, documentElement, body, 
       tp = parseInt(scrY+10),
       lt = parseInt(scrX+10),
       anch = checkNode();
-    gU.html(sweetTitles.tip, anch.getAttribute('tip'));
+    sweetTitles.tip.innerHTML = anch.getAttribute('tip');
 
     if (parseInt(document[documentElement].clientWidth + document[documentElement].scrollLeft) < parseInt(sweetTitles.tip.offsetWidth + lt)) {
       lt = parseInt(lt-(sweetTitles.tip.offsetWidth+25));
@@ -115,6 +113,7 @@ var sweetTitles = (function (window, document, parseInt, documentElement, body, 
       gU.on(document, 'mousemove', updateXY);
     }
   };
-  window.setTimeout(sweetTitles.init, 500);
-  return sweetTitles.init; // only init is exported now so call sweetTitles()
-})(window, document, parseInt, 'documentElement', 'body');
+  gU.sT = sweetTitles.init;
+  window.setTimeout(gU.sT, 500);
+  return gU.sT; // only init is exported now so call sweetTitles()
+})(window, document, window.gU, parseInt, 'documentElement', 'body');

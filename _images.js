@@ -1,5 +1,5 @@
 'use strict';
-(function(document, gU, round, appendChild, coords, sweetTitles) {
+(function(document, gU, round, appendChild, coords) {
   if (!gU) return;
   var images,
     script = '/php/images.php',
@@ -74,8 +74,7 @@
     overlay.style.height = height + 'px';
     overlay.title = note.text;
     document.body[appendChild](overlay);
-    sweetTitles = window.sweetTitles;
-    if (sweetTitles) sweetTitles();
+    gU.sT && gU.sT();
     return overlay;
   }
 

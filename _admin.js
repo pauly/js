@@ -1,4 +1,4 @@
-(function (window, document, value, length, space, parentNode, insertBefore, description, gU, sweetTitles) {
+(function (window, document, value, length, space, parentNode, insertBefore, description, gU) {
   'use strict';
   gU = window.gU;
   if (!gU) return;
@@ -42,14 +42,13 @@
       });
     }
     input.focus();
-    sweetTitles = window.sweetTitles;
-    sweetTitles && sweetTitles();
+    gU.sT && gU.sT();
   }
 
   function autocomplete(table, list, v) {
     v = this.value;
     if (v[length] > 2) {
-      gU.getJSON('/j/' + table + '?v=' + v, buildList.bind(this, list));
+      gU.json('/j/' + table + '?v=' + v, buildList.bind(this, list));
     }
   }
 
@@ -68,8 +67,7 @@
       gU.on(input, 'keyup', autocomplete.bind(input, table, list));
     }
   };
-  mCategory = gU.byId('mCategory');
-  if (mCategory) {
+  if (mCategory = gU.byId('mCategory')) { // not good practice but better minifying
     tagDiv = _createElement('div');
     mCategory[parentNode][insertBefore](tagDiv, mCategory);
     mCategory[parentNode][insertBefore](mCategory, tagDiv); // swap them
@@ -88,8 +86,7 @@
   $('input[name=venueAddress]').change(function () {
     $('input[name=latitude],input[name=longitude]').val('');
   }); */
-  mText = gU.byId('mText');
-  if (mText) {
+  if (mText = gU.byId('mText')) { // not good practice but better minifying
     mText.focus();
     // moves cursor to bottom
     var val = mText[value];

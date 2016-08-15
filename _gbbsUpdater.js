@@ -105,7 +105,7 @@ var gU = (function(window, document) {
       };
       request.send();
     },
-    getJSON: function(url, callback, tag, scriptName) { // like $.getJSON
+    json: function(url, callback, tag, scriptName) { // like $.getJSON
       scriptName = '_cb' + (new Date()).getTime(),
         tag = _createElement('script');
       tag.src = url[replace](/(\?|$)/, '?callback=' + scriptName + '&');

@@ -58,7 +58,6 @@
 
   raf = requestAnimationFrame || mozRequestAnimationFrame ||
     webkitRequestAnimationFrame || msRequestAnimationFrame;
-  if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
-  else gU.ok(loadDeferredStyles);
+  raf ? raf(function() { window.setTimeout(loadDeferredStyles, 0); }) : gU.ok(loadDeferredStyles);
 
 })(window, document, 'script', 'readyState', 'onreadystatechange');

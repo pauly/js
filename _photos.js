@@ -60,8 +60,7 @@
       }
     } */
     url += '&alt=json&q=' + tags.join('+OR+');
-    // gU.debug(url);
-    gU.getJSON(url, function (js) {
+    gU.json(url, function (js) {
       if (!(js && js.feed && js.feed.entry && js.feed.entry[length])) return;
       var id = 'photoContent';
       gU.html(placeHolder, '<h2><abbr title="' + tags.join(' + ') + '">Some pictures</abbr></h2><div id="' + id + '"></div>');
