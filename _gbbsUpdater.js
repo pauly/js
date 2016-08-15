@@ -22,13 +22,10 @@ var gU = (function(window, document) {
     innerHTML = 'innerHTML',
     length = 'length',
     message = 'message',
-    space = ' ',
     remove = 'remove',
     edit = 'edit',
     replace = 'replace',
     value = 'value',
-    substr = 'substr',
-    script = '/a',
     adminLevel = {
       pauly: 10
     },
@@ -46,8 +43,8 @@ var gU = (function(window, document) {
     cookies = document.cookie.split(/; */);
     for (index = cookies[length]; index >= 0; --index) {
       cookie = ('' + cookies[index])[replace](/^ /g, '');
-      if (cookie[substr](0, name[length] + 1) == (name + '=')) {
-        return decodeURIComponent(cookie[substr](name[length] + 1));
+      if (cookie.substr(0, name[length] + 1) == (name + '=')) {
+        return decodeURIComponent(cookie.substr(name[length] + 1));
       }
     }
   }
@@ -128,7 +125,7 @@ var gU = (function(window, document) {
         url += '&confirm = ' + c;
       }
       anchor[className] = 'loading';
-      _html(anchor,  mode + space + table + space + id +', please wait...');
+      _html(anchor,  mode + ' ' + table + ' ' + id +', please wait...');
       gU.get(url, function(response) {
         _html(parent, response);
         _initialise();
@@ -147,7 +144,7 @@ var gU = (function(window, document) {
       }
       _warn(callerDiv);
       callerDiv.href = '#';
-      if (confirm('Really ' + mode + space + table + space + id + '?')) {
+      if (confirm('Really ' + mode + ' ' + table + ' ' + id + '?')) {
         _html(anchor, 'Deleting...');
         url = url + '&confirm=1';
         gU.get(url, function() {
@@ -159,10 +156,10 @@ var gU = (function(window, document) {
     }, */
     /* cM: function(m) {
       var url = script + '?m=' + edit + '&key=' + m + '&threadClosed=1',
-        div = gU.byId(message + space + m),
+        div = gU.byId(message + ' ' + m),
         cLink;
       _warn(div);
-      if (confirm('Really close ' + message + space + m + '?')) {
+      if (confirm('Really close ' + message + ' ' + m + '?')) {
         cLink = gU.byId('close' + m);
         _html(cLink, 'Closing...');
         url += '&confirm=1';
@@ -178,7 +175,7 @@ var gU = (function(window, document) {
         div = gU.byId(message + m),
         rLink;
       _warn(div);
-      if (confirm('Report ' + message + space + m + ' as spam?')) {
+      if (confirm('Report ' + message + ' ' + m + ' as spam?')) {
         rLink = gU.byId('report' + m);
         _html(rLink, 'Reporting and deleting...');
         url = url + '&confirm=1';
@@ -194,7 +191,7 @@ var gU = (function(window, document) {
       var url = script + '?m=' + remove + '&key=' + m,
         div = gU.byId(message + m);
       _warn(div);
-      if (confirm('Really ' + remove + space + message + space + m + '?')) {
+      if (confirm('Really ' + remove + ' ' + message + ' ' + m + '?')) {
         _html(gU.byId(remove + m), 'Deleting...');
         url = url + '&confirm=1';
         gU.get(url, function(response) {
@@ -239,18 +236,18 @@ var gU = (function(window, document) {
         anchor.rel += ' noopener';
       }
 
-      regex = /\/r\/([0-9]+)\/([0-9]+)#(\w+)/.exec(href);
+      regex = /\/r\/(\d+)\/(\d+)#(\w+)/.exec(href);
       if (regex) {
         var board = regex[1],
           id = regex[2],
           div = anchor.parentElement,
           punter = regex[3];
-        _appendChild(div, _adminLink('/tweet/' + message.charAt(0), 'twitter', id));
+        _appendChild(div, _adminLink('/tweet/' + message.charAt(0), 'tweet', id));
         if (user == punter || adminLevel[user] >= security[edit]) {
           // was used on popbitch
-          // _appendChild(div, _adminLink(script + '?m=' + edit + '&b=' + board + '&confirm=1&key='', 'rebuild', id));
-          _appendChild(div, _adminLink(script + '?m=' + remove + '&b=' + board + '&key=', remove, id));
-          _appendChild(div, _adminLink(script + '?m=' + edit + '&b=' + board + '&key=', edit, id));
+          // _appendChild(div, _adminLink('/a?m=' + edit + '&b=' + board + '&confirm=1&key='', 'rebuild', id));
+          _appendChild(div, _adminLink('/a?m=' + remove + '&b=' + board + '&key=', remove, id));
+          _appendChild(div, _adminLink('/a?m=' + edit + '&b=' + board + '&key=', edit, id));
         }
         _appendChild(div, anchor);
       }
