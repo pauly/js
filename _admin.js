@@ -38,14 +38,17 @@
     }
   }
 
+  function insertAfter(newElement, targetElement) {
+    targetElement[parentNode][insertBefore](newElement, targetElement);
+    targetElement[parentNode][insertBefore](targetElement, newElement); // swap them
+  }
+
   for (i = inputs[length] - 1; i >= 0; --i) {
     input = inputs[i];
     if (table = input.getAttribute('rel')) { // not good practice but better minifying
       var list = _createElement('ul');
+      insertAfter(list, input);
       list.className = 'popup';
-      parent = input[parentNode];
-      parent[insertBefore](list, input);
-      parent[insertBefore](input, list); // swap
       gU.on(input, 'keyup', autocomplete.bind(input, table, list));
     }
     // @todo rewrite maxlength not using jquery?
@@ -70,8 +73,7 @@
   }
   if (mCategory = gU.byId('mCategory')) { // not good practice but better minifying
     tagDiv = _createElement('div');
-    mCategory[parentNode][insertBefore](tagDiv, mCategory);
-    mCategory[parentNode][insertBefore](mCategory, tagDiv); // swap them
+    insertAfter(tagDiv, mCategory);
     gU.on(mCategory, 'keyup', function() {
       var val = mCategory[value];
       if (val) {
