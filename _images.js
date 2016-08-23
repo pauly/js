@@ -88,7 +88,7 @@
   }
 
   function init(index, image, lazy) {
-    images = gU.byTag('img');
+    images = gU.tag('img');
     for (index = images.length - 1; index >= 0; --index) {
       image = images[index];
       lazy = image.getAttribute('data-lazy');

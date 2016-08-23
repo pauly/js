@@ -7,7 +7,7 @@
  */
 (function(gU, gaq) {
   gU && gU.ok(function(links, i, len, a, href) {
-    links = gU.byTag('a');
+    links = gU.tag('a');
     for (i = 0, len = links.length; i < len; i++) {
       a = links[i];
       href = a.getAttribute('href');

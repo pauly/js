@@ -71,7 +71,7 @@
           .bind('keyup change', showCharCount).each(showCharCount);
       } */
   }
-  if (mCategory = gU.byId('mCategory')) { // not good practice but better minifying
+  if (mCategory = gU.id('mCategory')) { // not good practice but better minifying
     tagDiv = _createElement('div');
     insertAfter(tagDiv, mCategory);
     gU.on(mCategory, 'keyup', function() {
@@ -85,14 +85,14 @@
       }
     });
   }
-  // if (gU.byId('latitude') && gU.byId('longitude')) {
-  //  gU.byId('latitude').parent().append('<div id="gmapWrapper"><div id="inlineMap" class="map">Initialising map...</div></div>');
-  //  window.myGmap && myGmap.init(gU.byId('inlineMap'), gU.byId('latitude')[value], gU.byId('longitude')[value]);
+  // if (gU.id('latitude') && gU.id('longitude')) {
+  //  gU.id('latitude').parent().append('<div id="gmapWrapper"><div id="inlineMap" class="map">Initialising map...</div></div>');
+  //  window.myGmap && myGmap.init(gU.id('inlineMap'), gU.id('latitude')[value], gU.id('longitude')[value]);
   // }
   // $('input[name=venueAddress]').change(function () {
   //  $('input[name=latitude],input[name=longitude]').val('');
   // });
-  if (mText = gU.byId('mText')) { // not good practice but better minifying
+  if (mText = gU.id('mText')) { // not good practice but better minifying
     mText.focus();
     // moves cursor to bottom
     var val = mText[value];

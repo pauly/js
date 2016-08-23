@@ -258,8 +258,6 @@ var gU = (function(window, document) {
       }
     }
   }
-  gU.byId = gU.id;
-  gU.byTag = _getElementsByTagName;
   gU.ok = gU.on.bind(gU, window, 'load');
   gU.ok(_initialise);
   return gU;

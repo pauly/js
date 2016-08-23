@@ -1,12 +1,11 @@
 (function(gU) {
   'use strict';
-  gU && gU.ok(function(links, rel, i, a, size, regex) {
-    links = gU.byTag('a');
+  gU && gU.ok(function(links, i, a, regex) {
+    links = gU.tag('a');
     for (i = links.length - 1; i >= 0; i--) {
-      a = links[i], rel = a.rel;
-      if (regex = /^tag ([0-9]+)/.exec(rel)) {
-        size = regex[1]/1;
-        a.style['font-size'] = size + 'px'; //  opacity: ' + ((50 + size) / 100);
+      a = links[i];
+      if (regex = /^tag ([0-9]+)/.exec(a.rel)) {
+        a.style['font-size'] = regex[1]/1 + 'px'; //  opacity: ' + ((50 + regex[1]/1) / 100);
       }
     }
   });

@@ -42,7 +42,7 @@
 
   gU.ok(function() {
     var index,
-      h6 = gU.byTag('h6'),
+      h6 = gU.tag('h6'),
       regex;
     for (index in h6) {
       regex = /rate:([a-x]+):([0-9]+)(:([0-9]+))*/i.exec(h6[index][className]);
