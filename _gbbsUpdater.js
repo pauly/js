@@ -54,12 +54,12 @@ var gU = (function(window, document) {
     if (id) anchor.id = table + id;
     // href will always be appended with id
     anchor.href = href + id;
-    anchor[innerHTML] = table;
+    _setInnerHTML(anchor, table);
     if (callback) gU.on(anchor, 'click', callback);
     return anchor;
   }
 
-  function _html(element, content) { // like $.html
+  function _setInnerHTML(element, content) { // like $.html
     if (element) {
       if (typeof content === 'string') {
         element[innerHTML] = content;
@@ -71,14 +71,6 @@ var gU = (function(window, document) {
       _appendChild(element, content);
     }
   }
-
-  /* var _warningClass = ' warning';
-  function _warn(div) {
-    div[className] += _warningClass;
-  }
-  function _unWarn(div) {
-    div[className] = div[className][replace](_warningClass, '');
-  } */
 
   function _getElementsByTagName(id, context) {
     return (context || document).getElementsByTagName(id);
@@ -117,91 +109,8 @@ var gU = (function(window, document) {
       };
     },
     aC: _appendChild,
-    html: _html,
-    /* eF: function(anchor, table, id, mode, c) {
-      var parent = anchor.parentNode,
-        url = script + '?t=' + table + '&m=' + mode + '&key=' + id;
-      if (c) {
-        url += '&confirm = ' + c;
-      }
-      anchor[className] = 'loading';
-      _html(anchor,  mode + ' ' + table + ' ' + id +', please wait...');
-      gU.get(url, function(response) {
-        _html(parent, response);
-        _initialise();
-        findAjaxPopUps(anchor);
-        anchor[className] = anchor[className][replace]('loading', '');
-      });
-    }, */
-    /* dR: function(anchor, table, id, mode) {
-      var url = script + '?t=' + table + '&m=' + mode + '&key=' + id,
-        callerDivId = table + ':' + id,
-        callerDiv = gU.id(callerDivId),
-        toggler;
-      if (!callerDiv) {
-        toggler = gU.id('toggle' + table + '' + id);
-        callerDiv = toggler.parentNode;
-      }
-      _warn(callerDiv);
-      callerDiv.href = '#';
-      if (confirm('Really ' + mode + ' ' + table + ' ' + id + '?')) {
-        _html(anchor, 'Deleting...');
-        url = url + '&confirm=1';
-        gU.get(url, function() {
-          _html(callerDiv, '');
-        });
-      } else {
-        _unWarn(message);
-      }
-    }, */
-    /* cM: function(m) {
-      var url = script + '?m=' + edit + '&key=' + m + '&threadClosed=1',
-        div = gU.id(message + ' ' + m),
-        cLink;
-      _warn(div);
-      if (confirm('Really close ' + message + ' ' + m + '?')) {
-        cLink = gU.id('close' + m);
-        _html(cLink, 'Closing...');
-        url += '&confirm=1';
-        gU.get(url, function() {
-          cLink[innerHTML] = 'Closed';
-        });
-        return;
-      }
-      _unWarn(div);
-    }, */
-    /* rM: function(m) {
-      var url = script + '?t=' + message + '&m=report&key=' + m,
-        div = gU.id(message + m),
-        rLink;
-      _warn(div);
-      if (confirm('Report ' + message + ' ' + m + ' as spam?')) {
-        rLink = gU.id('report' + m);
-        _html(rLink, 'Reporting and deleting...');
-        url = url + '&confirm=1';
-        gU.get(url, function() {
-          _html(rLink, 'Reported and ' + remove + 'd');
-          div.style.display = 'none';
-        });
-        return;
-      }
-      _unWarn(div);
-    },
-    dM: function(m) {
-      var url = script + '?m=' + remove + '&key=' + m,
-        div = gU.id(message + m);
-      _warn(div);
-      if (confirm('Really ' + remove + ' ' + message + ' ' + m + '?')) {
-        _html(gU.id(remove + m), 'Deleting...');
-        url = url + '&confirm=1';
-        gU.get(url, function(response) {
-          _html(gU.id(remove + m, remove + 'd');
-          _html(div, '');
-        });
-        return;
-      }
-      _unWarn(div);
-    }, */
+    cE: _createElement,
+    html: _setInnerHTML
   };
 
   function _initialise() {
@@ -220,15 +129,15 @@ var gU = (function(window, document) {
 
     for (index = tags[length] - 1; index >= 0; --index) {
       var tag = tags[index],
-        t = tag[innerHTML],
-        p = tag.parentNode,
+        tagText = tag[innerHTML],
+        parent = tag.parentNode,
         a = _createElement('a');
-      a.title = 'Search for ' + t;
-      a.href = '/wiki/' + t.toLowerCase()[replace](/&\w+?;/, '')[replace](/\W+/g, '+');
-      a[className] = t;
-      a[innerHTML] = t;
-      p.insertBefore(a, tag);
-      p[removeChild](tag);
+      a.title = 'Search for ' + tagText;
+      a.href = '/wiki/' + tagText.toLowerCase()[replace](/&\w+?;/, '')[replace](/\W+/g, '+');
+      a[className] = tagText;
+      _setInnerHTML(a, tagText);
+      parent.insertBefore(a, tag);
+      parent[removeChild](tag);
     }
 
     for (index = links[length] - 1; index >= 0; --index) {
@@ -241,8 +150,7 @@ var gU = (function(window, document) {
         anchor.rel += ' noopener';
       }
 
-      regex = /\/r\/(\d+)\/(\d+)#(\w+)/.exec(href);
-      if (regex) {
+      if (regex = /\/r\/(\d+)\/(\d+)#(\w*)/.exec(href)) {
         var board = regex[1],
           id = regex[2],
           div = anchor.parentElement,
