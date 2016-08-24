@@ -1,22 +1,50 @@
-!function ( $ ) {
+(function (window, document, gU) {
   'use strict';
-  if ( ! $ ) return;
-  var name = $('a[itemprop="name"]:first').text( );
-  name = ( '' + name ).replace( /'/, '' );
-  var $address = $('addr.address');
-  var address = $address.text( ).split( ', ' )[1];
-  if ( ! address ) return;
-  // if ( window.console ) console.log( name, address );
-  var success = function ( data ) {
-    if ( ! data && data.establishments ) {
-      // console.log( 'success, but got', data );
+  gU = window.gU;
+  if (!gU) return;
+  var index,
+    links = gU.tag('a'),
+    addressNode = gU.tag('addr')[0],
+    address = addressNode.innerHTML.split(',')[0],
+    link,
+    name,
+    domain = 'ratings.food.gov.uk',
+    insertBefore = 'insertBefore',
+    parentNode = 'parentNode';
+
+  for (index = links.length - 1; index >= 0; --index) {
+    link = links[index];
+    if (link.getAttribute('itemprop')) name = link.innerHTML;
+  }
+  name = ('' + name).replace(/'/, '');
+  if (!address) return;
+  
+  function get(url, callback, request) {
+    request = new XMLHttpRequest();
+    request.open('GET', url, true);
+    request.setRequestHeader('accept', 'text/json');
+    request.setRequestHeader('x-api-version', 2);
+    request.onreadystatechange = function() {
+      if (request.readyState == 4 && request.status == 200) callback(request.responseText);
+    };
+    request.send();
+  }
+
+  function insertAfter(newElement, targetElement) {
+    targetElement[parentNode][insertBefore](newElement, targetElement);
+    targetElement[parentNode][insertBefore](targetElement, newElement); // swap them
+  }
+
+  function success(data) {
+    data = JSON.parse(data);
+    if (!data || !data.establishments) {
+      // gU.debug('success, but got', data);
       return;
     }
     var venue = data.establishments[0];
-    if ( ! venue ) return;
-    // if ( window.console ) console.log( venue );
+    if (!venue) return;
     var img = '<img src="/img/fsa/' +
-      ( '' + venue.RatingKey ).toLowerCase( ) +
+      ('' + venue.RatingKey).toLowerCase() +
       '.jpg" />';
     img += '<br />' + [
       venue.AddressLine1,
@@ -25,27 +53,13 @@
       // venue.RightToReply,
       venue.RatingDate
     ].join( ', ' );
-    var a = '<a href="//ratings.food.gov.uk/">' + img + '</a>';
-    $address.after( '<p>' + a + '</p>' );
-  };
-  var fail = function ( a, b, c ) {
-    // if ( window.console ) console.log( 'fail', a, b, c );
-  };
-  var beforeSend = function ( xhr ){
-    xhr.setRequestHeader( 'accept', 'text/json' );
-    xhr.setRequestHeader( 'X-Api-Version', 2 );
-  };
-  var options = {
-    dataType: 'json',
-    url: 'http://api.ratings.food.gov.uk/Establishments?name=' + name + '&address=' + address,
-    // beforeSend: beforeSend,
-    headers: {
-      accept: 'text/json',
-      'x-api-version': 2
-    },
-    success: success,
-    fail: fail
-  };
-  // if ( window.console ) console.log( options );
-  $.ajax( options );
-}( window.$ );
+    var anchor = gU.cE('a'); // createElement
+    anchor.href = domain;
+    gU.html(anchor, img);
+    var wrapper = gU.cE('p'); // createElement
+    gU.html(wrapper, anchor);
+    insertAfter(wrapper, addressNode);
+  }
+
+  get('http://api.' + domain + '/Establishments?name=' + name + '&address=' + address, success);
+})(window, document);
