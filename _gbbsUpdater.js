@@ -25,7 +25,6 @@ var gU = (function(window, document) {
     remove = 'remove',
     edit = 'edit',
     replace = 'replace',
-    value = 'value',
     adminLevel = {
       pauly: 10
     },
@@ -80,7 +79,6 @@ var gU = (function(window, document) {
     on: function(element, event, callback) { // like $.on
       if (element[addEventListener]) return element[addEventListener](event, callback, false);
       if (element[attachEvent]) return element[attachEvent]('on' + event, callback);
-      // if we have no events just do it now?
     },
     /* debug: function() {
       var console = window.console;
@@ -113,12 +111,13 @@ var gU = (function(window, document) {
     html: _setInnerHTML
   };
 
-  function _initialise() {
-    // if (!document.getElementById) return; // unlikely
+  gU.ok = gU.on.bind(gU, window, 'load');
+
+  gU.ok(function() {
     var index,
-      tags = _getElementsByTagName('b'),
       links = _getElementsByTagName('a'),
       anchor,
+      tagText,
       href,
       regex,
       user;
@@ -127,23 +126,19 @@ var gU = (function(window, document) {
       user = regex[1];
     }
 
-    for (index = tags[length] - 1; index >= 0; --index) {
-      var tag = tags[index],
-        tagText = tag[innerHTML],
-        parent = tag.parentNode,
-        a = _createElement('a');
-      a.title = 'Search for ' + tagText;
-      a.href = '/wiki/' + tagText.toLowerCase()[replace](/&\w+?;/, '')[replace](/\W+/g, '+');
-      a[className] = tagText;
-      _setInnerHTML(a, tagText);
-      parent.insertBefore(a, tag);
-      parent[removeChild](tag);
-    }
-
     for (index = links[length] - 1; index >= 0; --index) {
       anchor = links[index],
-        href = anchor.href;
+        tagText = anchor[innerHTML];
 
+      // internal links that I used to do with <b> tags
+      // any <a> with no href is considered a wiki style link
+      if (!anchor.href) {
+        anchor.title = 'Search for ' + tagText;
+        anchor.href = '/wiki/' + tagText.toLowerCase().split(/\W+/).join('+');
+        anchor[className] = tagText;
+      }
+
+      href = anchor.href;
       // external links
       if (('' + href).indexOf(location.host) === -1) {
         anchor[className] += ' external';
@@ -165,8 +160,6 @@ var gU = (function(window, document) {
         _appendChild(div, anchor);
       }
     }
-  }
-  gU.ok = gU.on.bind(gU, window, 'load');
-  gU.ok(_initialise);
+  });
   return gU;
 })(window, document);
