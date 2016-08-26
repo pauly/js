@@ -4,7 +4,7 @@ All my js for [Clarke family tree](http://www.clarkeology.com)
 and [Paul Clarke's blog](http://www.clarkeology.com/blog)
 and [Folkestone Gerald](http://www.folkestonegerald.com)...
 
-gbbsUpdater.js and loaders.js may be of interest, the others less so
+gbbsUpdater.js, loaders.js, and toolTipLib.js may be of interest, the others less so
 
 - _admin.js - js for editing and adding content
 - _artist.js - unused

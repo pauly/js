@@ -4,7 +4,7 @@
   rewritten by pauly
   requires http://www.clarkeology.com/js/gbbsUpdater.js
 */
-(function (window, document, setTimeout, clearTimeout, parseInt, documentElement, body, gU, tipTimeout, opacityTimeout) { 
+(function (window, document, setTimeout, clearTimeout, parseInt, documentElement, body, gU, tip, tipTimeout, opacityTimeout, xCoord, yCoord) { 
   gU = window.gU;
   if (!gU) return;
 
@@ -20,23 +20,23 @@
   }
 
   function tipShow() {    
-    var scrX = parseInt(sweetTitles.xCord),
-      scrY = parseInt(sweetTitles.yCord),
+    var scrX = parseInt(xCoord),
+      scrY = parseInt(yCoord),
       top = parseInt(scrY+10),
       left = parseInt(scrX+10),
       anch = this;
-    sweetTitles.tip.innerHTML = anch.getAttribute('tip');
+    gU.html(tip, anch.getAttribute('tip'));
 
-    if (parseInt(document[documentElement].clientWidth + document[documentElement].scrollLeft) < parseInt(sweetTitles.tip.offsetWidth + left)) {
-      left = parseInt(left - (sweetTitles.tip.offsetWidth + 25));
+    if (parseInt(document[documentElement].clientWidth + document[documentElement].scrollLeft) < parseInt(tip.offsetWidth + left)) {
+      left = parseInt(left - (tip.offsetWidth + 25));
     }
-    sweetTitles.tip.style.left = left + 'px';
-    if (parseInt(document[documentElement].clientHeight + document[documentElement].scrollTop) < parseInt(sweetTitles.tip.offsetHeight + top)) {
-      top = parseInt(top - (sweetTitles.tip.offsetHeight + 25));
+    tip.style.left = left + 'px';
+    if (parseInt(document[documentElement].clientHeight + document[documentElement].scrollTop) < parseInt(tip.offsetHeight + top)) {
+      top = parseInt(top - (tip.offsetHeight + 25));
     }
-    sweetTitles.tip.style.top = top + 'px';
-    sweetTitles.tip.style.visibility = 'visible';
-    sweetTitles.tip.style.opacity = '.1';
+    tip.style.top = top + 'px';
+    tip.style.visibility = 'visible';
+    tip.style.opacity = '.1';
     tipFade(10);
   }
 
@@ -44,65 +44,57 @@
     var passed = parseInt(opac),
       newOpac = parseInt(passed + 10);
     if (newOpac < 80) {
-      sweetTitles.tip.style.opacity = '.' + newOpac;
+      tip.style.opacity = '.' + newOpac;
       opacityTimeout = setTimeout(function () {
         tipFade(newOpac);
       }, 20);
       return;
     }
-    sweetTitles.tip.style.opacity = '.80';
+    tip.style.opacity = '.80';
   }
 
   function updateXY(event) {
     if (document.captureEvents) {
-      sweetTitles.xCord = event.pageX;
-      sweetTitles.yCord = event.pageY;
+      xCoord = event.pageX;
+      yCoord = event.pageY;
       return;
     }
     if (window.event.clientX) {
-      sweetTitles.xCord = event.clientX + (document[documentElement].scrollLeft || document[body].scrollLeft);
-      sweetTitles.yCord = event.clientY + (document[documentElement].scrollTop || document[body].scrollTop);
+      xCoord = event.clientX + (document[documentElement].scrollLeft || document[body].scrollLeft);
+      yCoord = event.clientY + (document[documentElement].scrollTop || document[body].scrollTop);
     }
   }
 
-  var sweetTitles = {
-    xCord: 0,
-    yCord: 0,
-    tip: Object,        // @Element: The actual toolTip itself
-    init: function() {
-      if ((window.innerWidth || document[body].clientWidth) < 800) return;
-      sweetTitles.tip = gU.cE('div'); // createElement
-      sweetTitles.tip.id = 'toolTip';
-      gU.aC(gU.tag(body)[0], sweetTitles.tip); // appendChild
-      // sweetTitles.tip.style.top = '0';
-      sweetTitles.tip.style.position = 'absolute';
-      sweetTitles.tip.style.visibility = 'hidden';
-      gU.on(document, 'mousemove', updateXY);
-      gU.on(document, 'mouseover', function (event, element, title) {
-        element = event.target;
-        // event delegation, only apply to the elements in tipElements, so <a>
-        if (tippableElement(element)) {
-          title = element.getAttribute('title');
-          if (title) {
-            element.setAttribute('tip', title);
-            element.removeAttribute('title');
-          }
-          if (element.getAttribute('tip')) {
-            tipTimeout = setTimeout(tipShow.bind(element), 50);
-            updateXY(event);
-          }
+  gU.ok(function() { // can launch asap because of event delegation
+    if ((window.innerWidth || document[body].clientWidth) < 800) return;
+    tip = gU.cE('div'); // createElement
+    tip.id = 'toolTip';
+    gU.aC(gU.tag(body)[0], tip); // appendChild
+    tip.style.position = 'absolute'; // essential css to make this work
+    tip.style.visibility = 'hidden'; // other styling is in external css
+    gU.on(document, 'mousemove', updateXY);
+    gU.on(document, 'mouseover', function (event, element, title) {
+      element = event.target;
+      // event delegation, only apply to the elements in tipElements, so <a>
+      if (tippableElement(element)) {
+        title = element.getAttribute('title');
+        if (title) {
+          element.setAttribute('tip', title);
+          element.removeAttribute('title');
         }
-      });
-      gU.on(document, 'mouseout', function (event) {
-        // event delegation, only apply to the elements in tipElements, so <a>
-        if (tippableElement(event.target)) {
-          clearTimeout(tipTimeout);
-          clearTimeout(opacityTimeout);
-          sweetTitles.tip.style.visibility = 'hidden';
+        if (element.getAttribute('tip')) {
+          tipTimeout = setTimeout(tipShow.bind(element), 50);
+          updateXY(event);
         }
-      });
-    }
-  };
-  gU.sT = sweetTitles.init; // attach it to gbbsUpdater as it is called again, though it does not need to be any more
-  gU.ok(sweetTitles.init); // can launch asap because of event delegation
+      }
+    });
+    gU.on(document, 'mouseout', function (event) {
+      // event delegation, only apply to the elements in tipElements, so <a>
+      if (tippableElement(event.target)) {
+        clearTimeout(tipTimeout);
+        clearTimeout(opacityTimeout);
+        tip.style.visibility = 'hidden';
+      }
+    });
+  });
 })(window, document, setTimeout, clearTimeout, parseInt, 'documentElement', 'body');

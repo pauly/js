@@ -28,7 +28,6 @@
       });
     }
     input.focus();
-    gU.sT && gU.sT(); // reinstantiate sweet titles if we have it
   }
 
   function autocomplete(table, list, v) {

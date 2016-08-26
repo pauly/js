@@ -74,7 +74,6 @@
     overlay.style.height = height + 'px';
     overlay.title = note.text;
     document.body[appendChild](overlay);
-    gU.sT && gU.sT();
     return overlay;
   }
 
