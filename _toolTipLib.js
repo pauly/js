@@ -22,10 +22,9 @@
   function tipShow() {    
     var scrX = parseInt(xCoord),
       scrY = parseInt(yCoord),
-      top = parseInt(scrY+10),
-      left = parseInt(scrX+10),
-      anch = this;
-    gU.html(tip, anch.getAttribute('tip'));
+      top = scrY + 10,
+      left = scrX + 10;
+    gU.html(tip, this.getAttribute('tip')); // because we bound tipShow to the element
 
     if (parseInt(document[documentElement].clientWidth + document[documentElement].scrollLeft) < parseInt(tip.offsetWidth + left)) {
       left = parseInt(left - (tip.offsetWidth + 25));
@@ -40,13 +39,12 @@
     tipFade(10);
   }
 
-  function tipFade(opac) {
-    var passed = parseInt(opac),
-      newOpac = parseInt(passed + 10);
-    if (newOpac < 80) {
-      tip.style.opacity = '.' + newOpac;
+  function tipFade(originalOpacity, newOpacity) {
+    newOpacity = originalOpacity + 10;
+    if (newOpacity < 80) {
+      tip.style.opacity = '.' + newOpacity;
       opacityTimeout = setTimeout(function () {
-        tipFade(newOpac);
+        tipFade(newOpacity);
       }, 20);
       return;
     }
