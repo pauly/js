@@ -6,7 +6,13 @@
   var inputs = gU.tag('input'),
     _setInnerHTML = gU.html,
     _createElement = document.createElement.bind(document),
-    input, table, i, mText, mCategory, tagDiv;
+    input,
+    table,
+    i,
+    mText,
+    mCategory,
+    tagDiv,
+    includes;
 
   function buildList(list, js, input, item, listItem, link, index) {
     input = this; // this way minifies better than binding
@@ -42,13 +48,14 @@
     targetElement[parentNode][insertBefore](targetElement, newElement); // swap them
   }
 
+  gU.debug && gU.debug('todo delegation of autocompletes?');
   for (i = inputs[length] - 1; i >= 0; --i) {
     input = inputs[i];
     if (table = input.getAttribute('rel')) { // not good practice but better minifying
       var list = _createElement('ul');
       insertAfter(list, input);
       list.className = 'popup';
-      gU.on(input, 'keyup', autocomplete.bind(input, table, list));
+      gU.on(input, 'keyup', autocomplete.bind(input, table, list)); // todo delegation!
     }
     // @todo rewrite maxlength not using jquery?
     /* if (/length(\d+)/.test($(this).attr('class'))) {
@@ -97,5 +104,14 @@
     var val = mText[value];
     mText[value] = '';
     mText[value] = val;
+    if (includes = gU.id('includes')) { // not good practice but better minifying
+      gU.on(includes, 'click', function(element, target) {
+        target = element.target;
+        if (target.nodeName == 'A') {
+          mText[value] += '\n' + target.rel;
+        }
+        element.preventDefault();
+      });
+    }
   }
 })(window, document, 'value', 'length', ' ', 'parentNode', 'insertBefore', 'description');
