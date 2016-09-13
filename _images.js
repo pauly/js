@@ -1,8 +1,32 @@
 'use strict';
-(function(document, gU, round, appendChild, coords) {
+// I really liked the overlays that flickr used to do,
+// so this is that.
+(function(document, gU, round, appendChild, coords, style) {
+  // requires http://www.clarkeology.com/js/gbbsUpdater.js
+  // also requires an api at /i that can get or post
+  // notes for images.
+  // spec to come here...
+  // GET /i/imageurl
+  //  {
+  //    notes: [
+  //      {
+  //        text: 'a label',
+  //        coords: [left, top, right, bottom]
+  //      }
+  //    ]
+  //  }
+  // POST /i/imageurl
+  //  {
+  //    notes: [
+  //      {
+  //        text: 'a label',
+  //        coords: [left, top, right, bottom]
+  //      }
+  //    ]
+  //  }
   if (!gU) return;
+
   var images,
-    script = '/php/images.php',
     box = null;
 
   function getOffset(element, offset) {
@@ -14,16 +38,23 @@
     return offset;
   }
 
-  function findImage(images, src, index) {
+  // first 250 chars of url, that needs to be unique enough
+  // so it fits neatly in a varchar in the db
+  function beginningOf(url) {
+    return ('' + url).replace(/^\w+:\/+/, '').substr(0, 240);
+  }
+
+  function findImage(srcToFind, image, index) {
     for (index in images) {
-      if (images[index].src.substr(0, 255) === src.substr(0,255)) return images[index];
+      image = images[index];
+      if (beginningOf(image.src) === beginningOf(srcToFind)) return image;
     }
   }
 
   function mousedown(e, image, src, offset, x, y, text, url) {
     if (!e.altKey) return;
     src = e.currentTarget.currentSrc;
-    image = findImage(images, src);
+    image = findImage(src);
     offset = getOffset(e.currentTarget);
     x = e.pageX - offset.x - document.body.scrollLeft;
     y = e.pageY - offset.y - document.body.scrollTop;
@@ -47,41 +78,44 @@
     drawNote(box);
     box.text = prompt('Enter a note for this area');
     if (box.text) {
-      url = script + '?_method=post&src=' + image.src +
+      url = '/i/' + beginningOf(image.src) + '?_method=post' +
         '&text=' + box.text + '&' + coords + '[0]=' + box[coords][0] + '&' + coords + '[1]=' + box[coords][1] +
         '&' + coords + '[2]=' + box[coords][2] + '&' + coords + '[3]=' + box[coords][3];
-      gU.get(url, success);
+      gU.get(url, drawNotes);
     }
     box = null;
   }
 
   function drawNote(note, offset, image, overlay, src, left, top, width, height) {
     src = note.src;
-    image = findImage(images, src);
-    offset = getOffset(image);
-    if (!offset) return;
-    left = offset.x + ((image.width * note[coords][0]) / 100) + document.body.scrollLeft;
-    top = offset.y + ((image.height * note[coords][1]) / 100) + document.body.scrollTop;
-    width = image.width * ((note[coords][2] - note[coords][0]) / 100);
-    height = image.height * ((note[coords][3] - note[coords][1]) / 100);
-    overlay = document.createElement('a');
-    overlay.className = 'overlay';
-    overlay.style.color = '#' + (note.color || 'ff0');
-    overlay.style.border = '1px solid ' + overlay.style.color;
-    overlay.style.top = top + 'px';
-    overlay.style.left = left + 'px';
-    overlay.style.width = width + 'px';
-    overlay.style.height = height + 'px';
-    overlay.title = note.text;
-    document.body[appendChild](overlay);
-    return overlay;
+    if (image = findImage(src)) {
+      offset = getOffset(image);
+      if (!offset) return;
+      left = offset.x + ((image.width * note[coords][0]) / 100) + document.body.scrollLeft;
+      top = offset.y + ((image.height * note[coords][1]) / 100) + document.body.scrollTop;
+      width = image.width * ((note[coords][2] - note[coords][0]) / 100);
+      height = image.height * ((note[coords][3] - note[coords][1]) / 100);
+      overlay = document.createElement('a');
+      overlay.className = 'overlay';
+      overlay[style].color = '#' + (note.color || 'ff0');
+      overlay[style].border = '1px solid ' + overlay[style].color;
+      overlay[style].top = top + 'px';
+      overlay[style].left = left + 'px';
+      overlay[style].width = width + 'px';
+      overlay[style].height = height + 'px';
+      overlay.title = note.text;
+      document.body[appendChild](overlay);
+      return overlay;
+    }
   }
 
-  function success(data) {
+  function drawNotes(data, index) {
     if (JSON.parse) {
       data = JSON.parse(data);
       if (data.notes) {
-        data.notes.forEach(drawNote, data);
+        for (index = data.notes.length - 1; index >= 0; --index) {
+          drawNote(data.notes[index]);
+        }
       }
     }
   }
@@ -92,13 +126,14 @@
       image = images[index];
       lazy = image.getAttribute('data-lazy');
       if (lazy) image.src = lazy;
-      if (image.src.match(/maps.google|icons|ebaystatic|amazon|lst.fm/)) continue;
-      gU.on(image, 'mousedown', mousedown);
-      setTimeout(function() {
-        gU.get(script + '?src=' + image.src, success);
-      }, 999);
+      if (!image.src.match(/maps.google|icons|ebaystatic|amazon|lastfm|lst.fm/)) {
+        gU.on(image, 'mousedown', mousedown);
+        setTimeout(function() {
+          gU.get('/i/' + this, drawNotes);
+        }.bind(beginningOf(image.src)), 999);
+      }
     }
   }
 
   gU.ok(init);
-})(document, window.gU, Math.round, 'appendChild', 'coords');
+})(document, window.gU, Math.round, 'appendChild', 'coords', 'style');
