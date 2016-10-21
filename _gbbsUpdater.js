@@ -3,28 +3,25 @@
  * Microlibrary, to do everything I was using jquery for
  * Also run through my own forum / blog, looking for things to change
  * based on cookies etc
- * gU = gbbsUpdater
  * gbbs was "grate bulletin board system" back in the day
- * 
+ *
  * @author  Paul Clarke <paulypopex+php@gmail.com>
  */
 var gU = (function(window, document) {
 
   // shortcuts for better compression
   // this script makes a lot of use of document.foo === document['foo']
-  // document.fooBar can only be compressed to a.fooBar but 
+  // document.fooBar can only be compressed to a.fooBar but
   // document['fooBar'] can be compressed to a[b] - shorter, see
   var className = 'className',
     _createElement = document.createElement.bind(document),
     addEventListener = 'addEventListener',
-    attachEvent = 'attachEvent',
     removeChild = 'removeChild',
     innerHTML = 'innerHTML',
     length = 'length',
     message = 'message',
     remove = 'remove',
     edit = 'edit',
-    replace = 'replace',
     adminLevel = {
       pauly: 10
     },
@@ -47,17 +44,6 @@ var gU = (function(window, document) {
   //   }
   // }
 
-  // return a list item for the admin options
-  function _adminLink(href, table, id, callback, anchor) {
-    anchor = _createElement('a');
-    if (id) anchor.id = table + id;
-    // href will always be appended with id
-    anchor.href = href + id;
-    _setInnerHTML(anchor, table);
-    if (callback) gU.on(anchor, 'click', callback);
-    return anchor;
-  }
-
   function _setInnerHTML(element, content) { // like $.html
     if (element) {
       if (typeof content === 'string') {
@@ -71,14 +57,25 @@ var gU = (function(window, document) {
     }
   }
 
+  // return a list item for the admin options
+  function _adminLink(href, table, id, callback, anchor) {
+    anchor = _createElement('a');
+    if (id) anchor.id = table + id;
+    // href will always be appended with id
+    anchor.href = href + id;
+    _setInnerHTML(anchor, table);
+    if (callback) gU.on(anchor, 'click', callback);
+    return anchor;
+  }
+
+
   function _getElementsByTagName(id, context) {
     return (context || document).getElementsByTagName(id);
-  };
+  }
 
-  var gU = {
+  var gbbsUpdater = {
     on: function(element, event, callback) { // like $.on
-      if (element[addEventListener]) return element[addEventListener](event, callback, false);
-      if (element[attachEvent]) return element[attachEvent]('on' + event, callback);
+      element[addEventListener](event, callback, false);
     },
     /* debug: function() {
       var console = window.console;
@@ -86,22 +83,22 @@ var gU = (function(window, document) {
     }, */
     id: document.getElementById.bind(document),
     tag: _getElementsByTagName,
-    get: function(url, callback, request) { // like $.get
+    get: function(url, done, request) { // like $.get
       // don't support ie6
       request = new XMLHttpRequest();
       request.open('GET', url, true);
       request.onreadystatechange = function() {
-        if (request.readyState == 4 && request.status == 200) callback(request.responseText);
+        if (request.readyState == 4 && request.status == 200) done(request.responseText); // eslint-disable-line eqeqeq
       };
       request.send();
     },
-    json: function(url, callback, tag, scriptName) { // like $.getJSON
-      scriptName = '_cb' + (new Date()).getTime(),
-        tag = _createElement('script');
-      tag.src = url[replace](/(\?|$)/, '?callback=' + scriptName + '&');
+    json: function(url, done, tag, scriptName) { // like $.getJSON
+      scriptName = '_cb' + (new Date()).getTime();
+      tag = _createElement('script');
+      tag.src = url.replace(/(\?|$)/, '?callback=' + scriptName + '&');
       _appendChild(document.body, tag);
       window[scriptName] = function(data) {
-        callback(data);
+        done(data);
         delete window[scriptName];
         document.body[removeChild](tag);
       };
@@ -111,55 +108,54 @@ var gU = (function(window, document) {
     html: _setInnerHTML
   };
 
-  gU.ok = gU.on.bind(gU, window, 'load');
+  gbbsUpdater.ok = gbbsUpdater.on.bind(gbbsUpdater, window, 'load');
 
-  gU.ok(function() {
-    var index,
-      links = _getElementsByTagName('a'),
-      anchor,
-      tagText,
-      href,
-      regex,
-      user;
+  // don't need gU.ok as we're at the bottom of the content anyway
+  var index,
+    links = _getElementsByTagName('a'),
+    anchor,
+    tagText,
+    href,
+    regex,
+    user;
 
-    if (regex = /lN=(\w+)/.exec(document.cookie)) {
-      user = regex[1];
+  regex = /lN=(\w+)/.exec(document.cookie);
+  user = regex ? regex[1] : 0;
+
+  for (index = links[length] - 1; index >= 0; --index) {
+    anchor = links[index];
+    tagText = anchor[innerHTML];
+
+    // internal links that I used to do with <b> tags
+    // any <a> with no href is considered a wiki style link
+    if (!anchor.href) {
+      anchor.title = 'Search for ' + tagText;
+      anchor.href = '/' + (gbbsUpdater.id('section').content || 'wiki') + '/' + tagText.toLowerCase().split(/\W+/).join('+');
+      anchor[className] = tagText;
     }
 
-    for (index = links[length] - 1; index >= 0; --index) {
-      anchor = links[index],
-        tagText = anchor[innerHTML];
-
-      // internal links that I used to do with <b> tags
-      // any <a> with no href is considered a wiki style link
-      if (!anchor.href) {
-        anchor.title = 'Search for ' + tagText;
-        anchor.href = '/wiki/' + tagText.toLowerCase().split(/\W+/).join('+');
-        anchor[className] = tagText;
-      }
-
-      href = anchor.href;
-      // external links
-      if (('' + href).indexOf(location.host) === -1) {
-        anchor[className] += ' external';
-        anchor.rel += ' noopener';
-      }
-
-      if (regex = /\/r\/(\d+)\/(\d+)#(\w*)/.exec(href)) {
-        var board = regex[1],
-          id = regex[2],
-          div = anchor.parentElement,
-          punter = regex[3];
-        _appendChild(div, _adminLink('/tweet/' + message.charAt(0), 'tweet', id));
-        if (user == punter || adminLevel[user] >= security[edit]) {
-          // was used on popbitch
-          // _appendChild(div, _adminLink('/a?m=' + edit + '&b=' + board + '&confirm=1&key='', 'rebuild', id));
-          _appendChild(div, _adminLink('/a?m=' + remove + '&b=' + board + '&key=', remove, id));
-          _appendChild(div, _adminLink('/a?m=' + edit + '&b=' + board + '&key=', edit, id));
-        }
-        _appendChild(div, anchor);
-      }
+    href = anchor.href;
+    // external links
+    if (('' + href).indexOf(location.host) === -1) {
+      anchor[className] += ' external';
+      anchor.rel += ' noopener';
     }
-  });
-  return gU;
+
+    regex = /\/r\/(\d+)\/(\d+)#(\w*)/.exec(href);
+    if (regex) {
+      var board = regex[1],
+        id = regex[2],
+        div = anchor.parentElement,
+        punter = regex[3];
+      _appendChild(div, _adminLink('/tweet/' + message.charAt(0), 'tweet', id));
+      if (user == punter || adminLevel[user] >= security[edit]) { // eslint-disable-line eqeqeq
+        // was used on popbitch
+        // _appendChild(div, _adminLink('/a?m=' + edit + '&b=' + board + '&confirm=1&key='', 'rebuild', id));
+        _appendChild(div, _adminLink('/a?m=' + remove + '&b=' + board + '&key=', remove, id));
+        _appendChild(div, _adminLink('/a?m=' + edit + '&b=' + board + '&key=', edit, id));
+      }
+      _appendChild(div, anchor);
+    }
+  }
+  return gbbsUpdater;
 })(window, document);
