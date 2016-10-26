@@ -5,6 +5,7 @@
   "main": "gbbsUpdater.js",
   "scripts": {
     "build": "./build.sh",
+    "lint": "make-up && echo 🍺  linted",
     "postinstall": "npm run build",
     "test": "echo no tests yet; exit 1"
   },
@@ -23,5 +24,8 @@
   },
   "dependencies": {
     "uglifyjs": "~2.4.10"
+  },
+  "devDependencies": {
+    "make-up": "^9.3.1"
   }
 }

@@ -11,7 +11,7 @@ gbbsUpdater.js, loaders.js, images.js, and toolTipLib.js may be of interest, the
 - admin.js - js for editing and adding content
 - artist.js - unused
 - folkestone.js - folkestongerald.com specific code
-- gbbsUpdater.js - my microlibrary minifies to <2k
+- gbbsUpdater.js - my microlibrary minifies to 1.5k
 - images.js - lazy load images and add annotations like flickr used to do
 - loaders.js - js and css postloading
 - map.js - unused
@@ -24,3 +24,7 @@ gbbsUpdater.js, loaders.js, images.js, and toolTipLib.js may be of interest, the
 - tagCloud.js - style a tag cloud
 - toolTipLib.js - tooltip hovers
 - twfeed.js - unused
+
+## linting
+
+`npm run lint`

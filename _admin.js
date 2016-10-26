@@ -1,5 +1,6 @@
-(function (window, document, value, length, space, parentNode, insertBefore, description, gU) {
-  'use strict';
+'use strict';
+
+(function(window, document, value, length, space, parentNode, insertBefore, description, gU) {
   gU = window.gU;
   if (!gU) return;
 
@@ -14,8 +15,8 @@
     tagDiv,
     includes;
 
-  function buildList(list, js, input, item, listItem, link, index) {
-    input = this; // this way minifies better than binding
+  function buildList(list, js, self, item, listItem, link, index) {
+    self = this; // this way minifies better than binding
     _setInnerHTML(list, '');
     for (index = 0; index < js[length]; index++) {
       item = js[index];
@@ -27,19 +28,22 @@
       _setInnerHTML(link, item.title);
       gU.aC(listItem, link); // append child, add link to listItem
       gU.aC(list, listItem); // append child, add listItem to list
-      gU.on(link, 'click', function() {
-        input[value] = this.id;
+    }
+    gU.on(list, 'click', function(event, element) {
+      element = event.target;
+      if (element.nodeName === 'A') {
+        self[value] = element.id;
         _setInnerHTML(list, '');
         list = 0;
-      });
-    }
-    input.focus();
+      }
+    });
+    self.focus();
   }
 
-  function autocomplete(table, list, v) {
+  function autocomplete(dbTable, list, v) {
     v = this[value];
     if (v[length] > 2) {
-      gU.json('/j/' + table + '?v=' + v, buildList.bind(this, list));
+      gU.json('/j/' + dbTable + '?v=' + v, buildList.bind(this, list));
     }
   }
 
@@ -48,44 +52,45 @@
     targetElement[parentNode][insertBefore](targetElement, newElement); // swap them
   }
 
-  gU.debug && gU.debug('todo delegation of autocompletes?');
   for (i = inputs[length] - 1; i >= 0; --i) {
     input = inputs[i];
-    if (table = input.getAttribute('rel')) { // not good practice but better minifying
+    table = input.getAttribute('rel');
+    if (table) {
       var list = _createElement('ul');
       insertAfter(list, input);
       list.className = 'popup';
       gU.on(input, 'keyup', autocomplete.bind(input, table, list)); // todo delegation!
     }
-    // @todo rewrite maxlength not using jquery?
-    /* if (/length(\d+)/.test($(this).attr('class'))) {
-        var len = RegExp.$1;
-        var showCharCount = function() {
-          var l = $(this).val()[length];
-          var r = len - l;
-          var c = '#' + r.toString(16) + r.toString(16) + r.toString(16);
-          c = r < 1 || c[length] < 7 ? '#f00' : c;
-          if (l >= len) {
-            $(this).addClass('error').next('.kC').css({ color: c }).html(r + ' - max length is ' + len + '!');
-          }
-          else {
-            $(this).removeClass('error').next('.kC').css({ color: c }).html(r + ' chars remaining');
-          }
-          return false;
-        };
-        $(this).after('<abbr title="Chars remaining" class="kC">' + len + '</abbr>')
-          .bind('keyup change', showCharCount).each(showCharCount);
-      } */
   }
-  if (mCategory = gU.id('mCategory')) { // not good practice but better minifying
+
+  // no need for this at the moment, maybe add it as an extra lib if I do need it
+  /* gU.on(document, 'keyup', function(event, element, regex, remaining, colour) {
+    element = event.target;
+    if (element.nodeName == 'INPUT') {
+      if (!element._counter) {
+        element._counter = _createElement('a');
+        element._counter.title = 'Chars remaining';
+        insertAfter(element, element._counter);
+      }
+      if (regex = /length(\d+)/.exec(element.className)) {
+        remaining = regex[1] - element.value[length];
+        gU.html(element._counter, remaining);
+        colour = '#' + r.toString(16) + r.toString(16) + r.toString(16);
+        if (remaining < 1 || colour[length] < 7) colour = '#f00';
+        element._counter.style.color = colour;
+      }
+    }
+  }); */
+  mCategory = gU.id('mCategory');
+  if (mCategory) {
     tagDiv = _createElement('div');
     insertAfter(tagDiv, mCategory);
     gU.on(mCategory, 'keyup', function() {
       var val = mCategory[value];
       if (val) {
         var tags = val.split(space);
-        for (var i in tags) {
-          tags[i] = '<a href="#" rel="tag" class="' + tags[i] + '" href="/' + tags[i] + '">' + tags[i].replace(/\+/g, space) + '</' + 'a>';
+        for (var tagIndex in tags) {
+          tags[tagIndex] = '<a href="#" rel="tag" class="' + tags[tagIndex] + '" href="/' + tags[tagIndex] + '">' + tags[tagIndex].replace(/\+/g, space) + '</' + 'a>';
         }
         _setInnerHTML(tagDiv, tags.join(space));
       }
@@ -98,16 +103,18 @@
   // $('input[name=venueAddress]').change(function () {
   //  $('input[name=latitude],input[name=longitude]').val('');
   // });
-  if (mText = gU.id('mText')) { // not good practice but better minifying
+  mText = gU.id('mText');
+  if (mText) {
     mText.focus();
     // moves cursor to bottom
     var val = mText[value];
     mText[value] = '';
     mText[value] = val;
-    if (includes = gU.id('includes')) { // not good practice but better minifying
+    includes = gU.id('includes');
+    if (includes) {
       gU.on(includes, 'click', function(element, target) {
         target = element.target;
-        if (target.nodeName == 'A') {
+        if (target.nodeName === 'A') {
           mText[value] += '\n' + target.rel;
         }
         element.preventDefault();

@@ -1,5 +1,6 @@
-(function (window, document, gU) {
-  'use strict';
+'use strict';
+
+(function(window, document, gU) {
   gU = window.gU;
   if (!gU) return;
   var index,
@@ -18,7 +19,7 @@
   }
   name = ('' + name).replace(/'/, '');
   if (!address) return;
-  
+
   function get(url, callback, request) {
     request = new XMLHttpRequest();
     request.open('GET', url, true);

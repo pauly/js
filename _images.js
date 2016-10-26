@@ -45,7 +45,7 @@
     do {
       offset.x += element.offsetLeft - element[scrollLeft];
       offset.y += element.offsetTop - element[scrollTop];
-    } while (element = element.offsetParent);
+    } while (element = element.offsetParent); // eslint-disable-line no-cond-assign
     return offset;
   }
 
@@ -60,46 +60,13 @@
       image = images[index];
       if (beginningOf(image.src) === beginningOf(srcToFind)) return image;
     }
-  }
-
-  function mousedown(event, image, src, offset, x, y, text, url) {
-    if (!event.altKey) return;
-    src = event[currentTarget].currentSrc;
-    image = findImage(src);
-    offset = getOffset(event[currentTarget]);
-    x = event.pageX - offset.x - document[body][scrollLeft];
-    y = event.pageY - offset.y - document[body][scrollTop];
-    if (!box) { // this is our first click...
-      box = {
-        offset: offset,
-        left: x,
-        top: y
-      };
-      return;
-    }
-    // so this must be our second click...
-    box.right = x;
-    box.bottom = y;
-    box.src = src;
-    box[coords] = [
-      round((box.left / image[widthString]) * 100), // left as %
-      round((box.top / image[heightString]) * 100), // top as %
-      round((box.right / image[widthString]) * 100), // right as %
-      round((box.bottom / image[heightString]) * 100) // bottom as %
-    ];
-    drawNote(box);
-    if (box.text = prompt('Enter a note for this area')) {
-      url = '/i/' + beginningOf(image.src) + '?_method=post' +
-        '&text=' + box.text + '&' + coords + '[0]=' + box[coords][0] + '&' + coords + '[1]=' + box[coords][1] +
-        '&' + coords + '[2]=' + box[coords][2] + '&' + coords + '[3]=' + box[coords][3];
-      gU.get(url, drawNotes);
-    }
-    box = 0;
+    return null;
   }
 
   function drawNote(note, offset, image, overlay, src, left, top, width, height) {
     src = note.src;
-    if (image = findImage(src)) {
+    image = findImage(src);
+    if (image) {
       offset = getOffset(image);
       if (!offset) return;
       left = offset.x + ((image[widthString] * note[coords][0]) / 100) + document[body][scrollLeft];
@@ -129,6 +96,42 @@
         }
       }
     }
+  }
+
+  function mousedown(event, image, src, offset, x, y, text, url) {
+    if (!event.altKey) return;
+    src = event[currentTarget].currentSrc;
+    image = findImage(src);
+    offset = getOffset(event[currentTarget]);
+    x = event.pageX - offset.x - document[body][scrollLeft];
+    y = event.pageY - offset.y - document[body][scrollTop];
+    if (!box) { // this is our first click...
+      box = {
+        offset: offset,
+        left: x,
+        top: y
+      };
+      return;
+    }
+    // so this must be our second click...
+    box.right = x;
+    box.bottom = y;
+    box.src = src;
+    box[coords] = [
+      round((box.left / image[widthString]) * 100), // left as %
+      round((box.top / image[heightString]) * 100), // top as %
+      round((box.right / image[widthString]) * 100), // right as %
+      round((box.bottom / image[heightString]) * 100) // bottom as %
+    ];
+    drawNote(box);
+    box.text = prompt('Enter a note for this area'); // eslint-disable-line no-alert
+    if (box.text) {
+      url = '/i/' + beginningOf(image.src) + '?_method=post' +
+        '&text=' + box.text + '&' + coords + '[0]=' + box[coords][0] + '&' + coords + '[1]=' + box[coords][1] +
+        '&' + coords + '[2]=' + box[coords][2] + '&' + coords + '[3]=' + box[coords][3];
+      gU.get(url, drawNotes);
+    }
+    box = 0;
   }
 
   function init(index, image, lazy) {
