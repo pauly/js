@@ -4,7 +4,7 @@
   "description": "client js for clarkeology.com",
   "main": "gbbsUpdater.js",
   "scripts": {
-    "build": "./build.sh",
+    "build": "webpack",
     "lint": "make-up && echo 🍺  linted",
     "postinstall": "npm run build",
     "test": "echo no tests yet; exit 1"
@@ -22,10 +22,9 @@
   "bugs": {
     "url": "https://github.com/pauly/js/issues"
   },
-  "dependencies": {
-    "uglifyjs": "~2.4.10"
-  },
   "devDependencies": {
-    "make-up": "^9.3.1"
+    "make-up": "^9.3.1",
+    "webpack": "^1.13.3",
+    "webpack-jscrush": "0.0.5"
   }
 }
