@@ -1,4 +1,4 @@
-'use strict';
+/* global prompt */
 // I really liked the overlays that flickr used to do,
 // so this is that.
 (function (document, gU, round) {
@@ -26,29 +26,29 @@
   //  }
   if (!gU) return
 
-  var images,
-    image,
-    index,
-    lazy,
-    box = 0,
+  var images
+  var image
+  var index
+  var lazy
+  var box = 0
     // now a load of strings for better minifying
-    appendChild = 'appendChild',
-    coords = 'coords',
-    target = 'target',
-    // src = 'src',
-    scrollTop = 'scrollTop',
-    scrollLeft = 'scrollLeft',
-    heightString = 'height',
-    widthString = 'width',
-    style = 'style',
-    body = 'body'
+  var appendChild = 'appendChild'
+  var coords = 'coords'
+  var target = 'target'
+  // var src = 'src'
+  var scrollTop = 'scrollTop'
+  var scrollLeft = 'scrollLeft'
+  var heightString = 'height'
+  var widthString = 'width'
+  var style = 'style'
+  var body = 'body'
 
   function getOffset (element, offset) {
     offset = { x: 0, y: 0 }
     do {
       offset.x += element.offsetLeft - element[scrollLeft]
       offset.y += element.offsetTop - element[scrollTop]
-    } while (element = element.offsetParent)
+    } while (element = element.offsetParent) // eslint-disable-line no-cond-assign
     return offset
   }
 
@@ -93,7 +93,7 @@
       round((box.bottom / image[heightString]) * 100) // bottom as %
     ]
     drawNote(box)
-    if (box.text = prompt('Enter a note for this area')) {
+    if (box.text = prompt('Enter a note for this area')) { // eslint-disable-line no-cond-assign
       url = '/i/' + beginningOf(image.src) + '?_method=post' +
         '&text=' + box.text + '&' + coords + '[0]=' + box[coords][0] + '&' + coords + '[1]=' + box[coords][1] +
         '&' + coords + '[2]=' + box[coords][2] + '&' + coords + '[3]=' + box[coords][3]
@@ -104,7 +104,7 @@
 
   function drawNote (note, offset, image, overlay, src, left, top, width, height) {
     src = note.src
-    if (image = findImage(src)) {
+    if (image = findImage(src)) { // eslint-disable-line no-cond-assign
       offset = getOffset(image)
       if (!offset) return
       left = offset.x + ((image[widthString] * note[coords][0]) / 100) + document[body][scrollLeft]

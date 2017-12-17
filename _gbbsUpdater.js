@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * Microlibrary, to do everything I was using jquery for
  * Also run through my own forum / blog, looking for things to change
@@ -12,7 +10,7 @@
 
 /* global XMLHttpRequest, location */
 
-var gU = (function (window, document) {
+const gU = (function (window, document) {
   // shortcuts for better compression
   // this script makes a lot of use of document.foo === document['foo']
   // document.fooBar can only be compressed to a.fooBar but
