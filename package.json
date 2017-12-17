@@ -5,9 +5,11 @@
   "main": "gbbsUpdater.js",
   "scripts": {
     "build": "webpack",
-    "lint": "make-up && echo 🍺  linted",
+    "checksize": "check-built-asset-size",
+    "lint": "standard _*.js && echo 🍺  linted",
     "postinstall": "npm run build",
-    "test": "echo no tests yet; exit 1"
+    "test": "echo no tests yet; exit 1",
+    "ci": "npm run lint && npm run test"
   },
   "repository": {
     "type": "git",
@@ -22,9 +24,21 @@
   "bugs": {
     "url": "https://github.com/pauly/js/issues"
   },
+  "standard": {
+    "ignore": [
+      "_twfeed.js",
+      "[a-z]\\*.js"
+    ]
+  },
   "devDependencies": {
-    "make-up": "^9.3.1",
-    "webpack": "^1.13.3",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "deployment-helpers": "github:holidayextras/deployment-helpers#PAY-868",
+    "standard": "^10.0.3",
+    "webpack": "^2.7.0",
     "webpack-jscrush": "0.0.5"
+  },
+  "dependencies": {
+    "babel-preset-env": "^1.6.1"
   }
 }

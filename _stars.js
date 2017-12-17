@@ -1,57 +1,61 @@
-'use strict';
-(function(window, document) {
-  var _createElement = document.createElement.bind(document),
-    className = 'className',
-    gU = window.gU,
-    _html = gU.html;
+(function (window, document) {
+  'use strict'
+  var _createElement = document.createElement.bind(document)
+  var className = 'className'
+  var gU = window.gU
+  var _html = gU.html
+  var h6 = gU.tag('h6')
+  var h6Index
+  var regex
 
-  function _appendChild(element, child) {
-    element.appendChild(child);
+  function _appendChild (element, child) {
+    element.appendChild(child)
   }
 
-  function _addRating(table, id, score, url, wrapper) {
-    wrapper = this; // because we did _addRating.bind(wrapper)
-    url = '/a?t=' + table + '&m=ok&key=' + id + '&s=' + score;
-    gU.get(url, function() {
-      // briefly display "event 10" or whatever
-      _html(wrapper, table + ' ' + score);
-      // then after nearly a second, display the stars again
-      setTimeout(function() {
-        _html(wrapper, _stars(wrapper, table, id, score));
-      }, 900);
-    });
-    return false;
+  function _addRating (event, target, url, wrapper) {
+    target = event.target || event.srcElement
+    wrapper = target.wrapper
+    if (/☆/.test(target[className])) {
+      event.preventDefault()
+      gU.get(target.href, function () {
+        // briefly display "event 10" or whatever
+        wrapper[className] = wrapper[className].replace(' ☆', '')
+        _html(wrapper, target.table + ' ' + target.score)
+        // then after nearly a second, display the stars again
+        setTimeout(function () {
+          _stars(wrapper, target.table, target.key, target.score)
+        }, 900)
+      })
+    }
   }
 
-  // return some star ratings
-  function _stars(wrapper, table, id, score, stars, index) {
-    score = Math.floor(score);
-    stars = _createElement('ol');
-    stars[className] = 'stars';
+  // return some ☆ ratings
+  function _stars (wrapper, table, id, score, index) {
+    score = Math.floor(score)
+    wrapper[className] += ' ☆'
+    _html(wrapper, '')
     for (index = 1; index < 11; index++) {
-      var li = _createElement('li'),
-        a = _createElement('a');
-      a[className] = 'star' + index;
-      if (score === index) a[className] += ' lit lit' + index;
-      gU.on(a, 'click', _addRating.bind(wrapper, table, id, index));
-      _appendChild(li, a);
-      _appendChild(stars, li);
+      var a = _createElement('a')
+      a.key = id
+      a[className] = '☆' + index
+      if (score === index) a[className] += ' lit lit' + index
+      a.href = '/a?t=' + table + '&m=ok&key=' + id + '&s=' + index
+      a.score = index
+      a.wrapper = wrapper
+      a.table = table
+      _appendChild(wrapper, a)
     }
-    return stars;
   }
 
-  gU.ok(function() {
-    var index,
-      h6 = gU.tag('h6'),
-      regex;
-    for (index in h6) {
-      regex = /rate:([a-x]+):([0-9]+)(:([0-9]+))*/i.exec(h6[index][className]);
-      // table = regex[1],
-      // id = regex[2],
-      // score = regex[4],
-      // wrapper = h6[index];
-      regex && _html(h6[index], _stars(h6[index], regex[1], regex[2], regex[4]));
-    }
-  });
+  // don't need gU.ok here as we're at the bottom of the page
+  for (h6Index in h6) {
+    regex = /rate:([a-x]+):([0-9]+)(:([0-9]+))*/i.exec(h6[h6Index][className])
+    // table = regex[1],
+    // id = regex[2],
+    // score = regex[4],
+    // wrapper = h6[h6Index];
+    if (regex) _stars(h6[h6Index], regex[1], regex[2], regex[4])
+  }
 
-})(window, document);
+  gU.on(document, 'click', _addRating)
+})(window, document)
