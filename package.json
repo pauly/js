@@ -6,6 +6,7 @@
   "scripts": {
     "build": "webpack",
     "checksize": "check-built-asset-size",
+    "release": "release",
     "lint": "standard _*.js && echo 🍺  linted",
     "postinstall": "npm run build",
     "test": "echo no tests yet 🙀",
@@ -36,7 +37,7 @@
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
-    "deployment-helpers": "github:holidayextras/deployment-helpers#PAY-868",
+    "deployment-helpers": "github:holidayextras/deployment-helpers#label-pr",
     "standard": "^10.0.3",
     "webpack": "^2.7.0",
     "webpack-jscrush": "0.0.5"
