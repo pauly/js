@@ -1,11 +1,12 @@
 {
   "name": "js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "client js for clarkeology.com",
   "main": "gbbsUpdater.js",
   "scripts": {
     "build": "webpack",
     "checksize": "check-built-asset-size",
+    "prerelease": "prerelease",
     "release": "release",
     "lint": "standard _*.js && echo 🍺  linted",
     "postinstall": "npm run build",
@@ -37,7 +38,7 @@
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
-    "deployment-helpers": "github:holidayextras/deployment-helpers#label-pr",
+    "deployment-helpers": "github:holidayextras/deployment-helpers#v1-latest",
     "standard": "^10.0.3",
     "webpack": "^2.7.0",
     "webpack-jscrush": "0.0.5"
