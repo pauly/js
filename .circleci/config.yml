@@ -34,3 +34,6 @@ jobs:
       - run:
           name: check size
           command: npm run checksize
+      - run:
+          name: release
+          command: npm run release
