@@ -90,8 +90,8 @@ var config = module.exports = {
     libraryTarget: 'var',
     library: process.env.npm_package_name,
     filename: '[name].js',
-    path: path.resolve('./dist'),
-    publicPath: '/dist/'
+    // publicPath: '/dist/',
+    path: path.resolve('./dist')
   },
 
   plugins: [definePlugin, bannerPlugin]
@@ -103,4 +103,3 @@ if (process.env.NODE_ENV === 'production') {
   config.output.filename = '[name].min.js'
   config.plugins.unshift(uglifyPlugin)
 }
-

@@ -1,16 +1,17 @@
+/* global XMLHttpRequest */
 (function (window, document, gU) {
   'use strict'
   gU = window.gU
   if (!gU) return
-  var index,
-    links = gU.tag('a'),
-    addressNode = gU.tag('addr')[0],
-    address = addressNode.innerHTML.split(',')[0],
-    link,
-    name,
-    domain = 'ratings.food.gov.uk',
-    insertBefore = 'insertBefore',
-    parentNode = 'parentNode'
+  var index
+  var links = gU.tag('a')
+  var addressNode = gU.tag('addr')[0]
+  var address = addressNode.innerHTML.split(',')[0]
+  var link
+  var name
+  var domain = 'ratings.food.gov.uk'
+  var insertBefore = 'insertBefore'
+  var parentNode = 'parentNode'
 
   for (index = links.length - 1; index >= 0; --index) {
     link = links[index]
@@ -25,7 +26,7 @@
     request.setRequestHeader('accept', 'text/json')
     request.setRequestHeader('x-api-version', 2)
     request.onreadystatechange = function () {
-      if (request.readyState == 4 && request.status == 200) callback(request.responseText)
+      if (request.readyState === 4 && request.status == 200) callback(request.responseText) // eslint-disable-line eqeqeq
     }
     request.send()
   }

@@ -1,10 +1,7 @@
 /**
  * add some async google analytics tracking
- *
- * @name	t/ga.js
- * @author	PC <paulypopex+php@gmail.com>
- * @date	Thu Feb 24 12:39:54 GMT 2011
  */
+ /* global _gaq */
 (function (gU, gaq) {
   gU && gU.ok(function (links, i, len, a, href) {
     links = gU.tag('a')

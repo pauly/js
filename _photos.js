@@ -4,11 +4,11 @@
  * See http://www.clarkeology.com/m/14086/Moving+all+my+online+photos+to+PicasaWeb
  * requires my gbbsUpdater library, now I've got rid of jquery
  */
-!(function (gU, document, getElementsByClassName, length) {
+(function (gU, document, getElementsByClassName, length) {
   'use strict'
   if (!gU) return
 
-  function getTagsFrom (div, tags, links, i) {
+  function getTagsFrom (div, tags, links, i, l) {
     tags = [ ]
     if (div) {
       links = div[getElementsByClassName]('tag')
@@ -27,7 +27,7 @@
     if (!content) return [ ]
     return content.replace(/\s|folkestone,/g, '').split(',')
   };
-  gU.ok(function (tags, placeHolders, placeHolder, i, context, reasonsToQuit, url) {
+  gU.ok(function (tags, placeHolders, placeHolder, i, l, context, reasonsToQuit, url) {
     tags = getTagsFrom(gU.id('footerTags'))
     if (!tags[length]) tags = getTagsFrom(document.body)
     if (!tags[length]) tags = getTagsFromMetaKeywords()
@@ -42,7 +42,7 @@
     if (!placeHolder) return
     context = placeHolder
     gU.html(placeHolder, '')
-    while (context = context.parentNode) {
+    while (context = context.parentNode) { // eslint-disable-line no-cond-assign
       if (context.className.indexOf('🤘') !== -1) break
     }
     if (!context) return
