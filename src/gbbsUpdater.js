@@ -10,7 +10,7 @@
 
 /* global XMLHttpRequest, location */
 
-const gU = (function (window, document) {
+// module.exports = (function (window, document) {
   // shortcuts for better compression
   // this script makes a lot of use of document.foo === document['foo']
   // document.fooBar can only be compressed to a.fooBar but
@@ -65,7 +65,7 @@ const gU = (function (window, document) {
     // href will always be appended with id
     anchor.href = href + id
     _setInnerHTML(anchor, table)
-    if (callback) gU.on(anchor, 'click', callback)
+    if (callback) gbbsUpdater.on(anchor, 'click', callback)
     return anchor
   }
 
@@ -155,5 +155,6 @@ const gU = (function (window, document) {
       }
     }
   }
-  return gbbsUpdater
-})(window, document)
+  // return gbbsUpdater
+  module.exports = gbbsUpdater
+// })(window, document)
