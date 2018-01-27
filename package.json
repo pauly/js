@@ -1,21 +1,20 @@
 {
   "name": "js",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "client js for clarkeology.com",
   "main": "gbbsUpdater.js",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack && webpack --config webpack.library.config.js",
     "checksize": "check-built-asset-size",
     "prerelease": "prerelease",
     "release": "release",
     "lint": "standard _*.js && echo 🍺  linted",
-    "postinstall": "npm run build",
     "test": "echo no tests yet 🙀",
     "ci": "npm run lint && npm run test"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:pauly/js.git"
+    "url": "git+ssh://git@github.com/pauly/js.git"
   },
   "keywords": [
     "js",
@@ -45,5 +44,9 @@
   },
   "dependencies": {
     "babel-preset-env": "^1.6.1"
+  },
+  "homepage": "https://github.com/pauly/js#readme",
+  "directories": {
+    "doc": "docs"
   }
 }
