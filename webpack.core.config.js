@@ -33,10 +33,10 @@ const uglifyPlugin = new webpack.optimize.UglifyJsPlugin({
     hoist_funs: true,
     cascade: true,
     if_return: true,
-    join_consts: true,
+    // join_consts: true,
     drop_debugger: true,
     unsafe: true,
-    hoist_consts: true,
+    // hoist_consts: true,
     negate_iife: true
   },
   mangle: {
