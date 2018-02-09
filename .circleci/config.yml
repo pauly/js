@@ -36,4 +36,4 @@ jobs:
           command: npm run checksize
       - run:
           name: release
-          command: npm run release
+          command: RELEASE_BRANCH=master npm run release
