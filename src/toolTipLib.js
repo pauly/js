@@ -8,15 +8,13 @@
   gU = window.gU
   if (!gU) return
 
+  function getAttribute (element, attribute) {
+    return element.getAttribute(attribute)
+  }
+
   function tippableElement (element) {
-    return element && element.nodeName === 'A'
-    // I'm only allowing anchors to have tooltips on, but if we wanted more:
-    //  var tippableElements = ['A'], index;
-    //  if (element) {
-    //    for (index = tippableElements.length; index > 0; index--) {
-    //      if (tippableElements[index - 1] === element.nodeName) return true;
-    //    }
-    //  }
+    // return element && includes(element.nodeName === 'A'
+    return element && ['A', 'IMG'].includes(element.nodeName)
   }
 
   function tipShow () {
@@ -24,7 +22,7 @@
     const scrY = parseInt(yCoord, 10)
     let top = scrY + 10
     let left = scrX + 10
-    gU.html(tip, this.getAttribute('tip')) // because we bound tipShow to the element
+    gU.html(tip, getAttribute(this, 'tip')) // because we bound tipShow to the element
 
     if (parseInt(document[documentElement].clientWidth + document[documentElement].scrollLeft) < parseInt(tip.offsetWidth + left)) {
       left = parseInt(left - (tip.offsetWidth + 25))
@@ -73,21 +71,21 @@
   gU.on(document, 'mousemove', updateXY)
   gU.on(document, 'mouseover', function (event, element, title) {
     element = event.target
-      // event delegation, only apply to the elements in tipElements, so <a>
+    // event delegation, only apply to the elements in tipElements, so <a>
     if (tippableElement(element)) {
-      title = element.getAttribute('title')
+      title = getAttribute(element, 'title') || getAttribute(element, 'alt')
       if (title) {
         element.setAttribute('tip', title)
         element.removeAttribute('title')
       }
-      if (element.getAttribute('tip')) {
+      if (getAttribute(element, 'tip')) {
         tipTimeout = setTimeout(tipShow.bind(element), 50)
         updateXY(event)
       }
     }
   })
   gU.on(document, 'mouseout', function (event) {
-      // event delegation, only apply to the elements in tipElements, so <a>
+    // event delegation, only apply to the elements in tipElements, so <a>
     if (tippableElement(event.target)) {
       clearTimeout(tipTimeout)
       clearTimeout(opacityTimeout)
